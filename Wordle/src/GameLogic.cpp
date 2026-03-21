@@ -5,7 +5,7 @@
 #include <iostream>
 #include "GameLogic.h"
 
-
+//constructor for the class, sets the variables for the list of words, and the letter limits
 GameLogic::GameLogic(int letterLimit, std::vector<std::string>& words) {
 	GameLogic::words = words;
 	GameLogic::chosenWord = pickWord();
@@ -14,6 +14,7 @@ GameLogic::GameLogic(int letterLimit, std::vector<std::string>& words) {
 	std::cout << "The word is: " << chosenWord << std::endl;
 }
 
+//pick a random word to make players guess
 std::string GameLogic::pickWord() {
 
 	//seeding
@@ -24,6 +25,28 @@ std::string GameLogic::pickWord() {
 	return GameLogic::words[chosenWordNdx];
 }
 
+//checks the guess for correct letters and position
+
+/*
+We use a notation system where there is an array with a fixed size:
+
+{0, 0, 0, 0, 0}
+
+each item in the array is a stand in for a letter, where 0 = GRAY, 1 = YELLOW, and 2 = GREY
+
+so if the correct word is:
+
+RAISE
+
+and the user guessed 
+
+PHASE
+
+the notation for that is 
+
+{0, 0, 1, 2, 2}
+
+*/
 int* GameLogic::checkGuess(std::string guess) {
 
 	if (guess.size() != letterLimit) {

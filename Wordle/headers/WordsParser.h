@@ -1,6 +1,11 @@
 #pragma once
 #include <string>
 #include <vector>
+
+/*The WordsParser class is responsible for reading the text file of words and stroign each word in a
+list
+*/
+
 class WordsParser
 {
 private:
