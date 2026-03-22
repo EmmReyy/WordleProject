@@ -50,7 +50,8 @@ int* GameLogic::checkGuess(std::string guess, std::string chosenWord) {
 		return 0;
 	}
 
-	int guessNotation[5] = {0,0,0,0,0};
+	//int guessNotation[5] = {0,0,0,0,0};
+	int* guessNotation = new int[5] {0, 0, 0, 0, 0};
 
 	if (guess == chosenWord){
 		for (int i = 0; i < 5; i++) {
