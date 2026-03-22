@@ -18,5 +18,7 @@ public:
 	void parseFile(std::string dir);
 
 	std::vector<std::string>& getWords();
+
+	void capsLock(std::string& str);
 };
 

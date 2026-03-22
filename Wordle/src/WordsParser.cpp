@@ -20,6 +20,7 @@ void WordsParser::parseFile(std::string dir) {
 	std::string word;
 
 	while (std::getline(wordsFile, word)) {
+		capsLock(word);
 		WordsParser::words.push_back(word);
 	}
 
@@ -29,4 +30,10 @@ void WordsParser::parseFile(std::string dir) {
 //returns the list of words
 std::vector<std::string>& WordsParser::getWords(){
 	return WordsParser::words;
+}
+
+void WordsParser::capsLock(std::string& str) {
+	for (char& c : str) {
+		c = std::toupper(c);
+	}
 }

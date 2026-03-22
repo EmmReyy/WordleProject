@@ -10,7 +10,6 @@ class GameLogic {
 private:
 	std::vector<std::string> words;
 	std::vector<char> greyed;
-	std::string chosenWord;
 	int letterLimit;
 
 	bool guessed = false;
@@ -20,5 +19,6 @@ public:
 	
 	std::string pickWord();
 
-	int* checkGuess(std::string guess);
+	int* checkGuess(std::string guess, std::string chosenWord);
+
 };
