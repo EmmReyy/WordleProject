@@ -21,4 +21,5 @@ public:
 
 	int* checkGuess(std::string guess, std::string chosenWord);
 
+	float getAccuracy(int rounds, int wins);
 };

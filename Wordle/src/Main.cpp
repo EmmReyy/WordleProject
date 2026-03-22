@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <filesystem>
 #include "WordsParser.h"	//header for my WordsParse class, which read the text file
 #include <vector>
 #include "GameLogic.h"		//header for my GameLogic class, which handles the rules of the game
@@ -11,6 +12,7 @@ void clearInputLine();	//helper function that clears inputs from terminal
 void clearScreen();		//helper function to clear the terminal
 void capsLock(std::string& str);		//converts string to capital
 const int limit = 5;	//hard limit set to 5 letters, can be changed in future updates
+void displayAccuracy(float accuracy);		//for dsiplaying the players succes rate after the game
 
 void capsLock(std::string& str) {
 
@@ -56,6 +58,18 @@ void notationPrinter(int* notation, std::string guess) {
 	std::cout << "|" << std::endl;
 }
 
+void displayAccuracy(float accuracy) {
+	std::cout << "You acuracy is " << accuracy << "%, ";
+	
+	if (accuracy == 100) std::cout << "Flawless!" << std::endl;
+	else if (accuracy >= 95.0 && accuracy < 100) std::cout << "Impeccable!" << std::endl;
+	else if (accuracy >= 90.0 && accuracy < 95.0) std::cout << "Impressive!" << std::endl;
+	else if (accuracy >= 80.0 && accuracy < 90.0) std::cout << "Nicely Played!" << std::endl;
+	else if (accuracy >= 70.0 && accuracy < 80.0) std::cout << "Well Done!" << std::endl;
+	else if (accuracy >= 60.0 && accuracy < 70.0) std::cout << "Passable!" << std::endl;
+	else if (accuracy < 60.0) std::cout << "Do Better Next Time!" << std::endl;
+}
+
 bool guessed(int* notation) {
 	for (int i = 0; i < limit; i++) {
 		if (notation[i] != 2) {
@@ -66,9 +80,16 @@ bool guessed(int* notation) {
 	return true;
 }
 
-int main() {
+
+int main(int argc, char* argv[]) {
 	//creates an object of WordParser class
-	WordsParser wp = WordsParser("C:\\Users\\gobbl\\source\\repos\\Wordle\\Wordle\\WORDS");
+	//WordsParser wp = WordsParser("C:\\Users\\gobbl\\source\\repos\\Wordle\\Wordle\\WORDS");
+
+	std::filesystem::path exeDir = std::filesystem::path(argv[0]).parent_path();
+	std::filesystem::path wordsPath = exeDir / "WORDS";
+
+	WordsParser wp(wordsPath.string());
+
 	//stores the list of words given by Parser object
 	std::vector<std::string> words = wp.getWords();
 
@@ -76,6 +97,8 @@ int main() {
 	GameLogic gl = GameLogic(limit, words);
 
 	int counter = 0;
+	int rounds = 0;
+	int wins = 0;
 	std::string correctWord = gl.pickWord();
 	capsLock(correctWord);
 
@@ -109,18 +132,36 @@ int main() {
 
 		//if the guess matches correct word, exit out of loop
 		if (guessed(notation)) {
-			break;
+			std::cout << "You got it! The word is: " << correctWord << std::endl;
+
+			rounds++;
+			wins++;
+
+			std::cout << "Play again? " << std::endl;
+
+			std::string resp;
+			std::getline(std::cin, resp);
+			capsLock(resp);
+
+			if (resp == "YES") {
+				clearScreen();
+				correctWord = gl.pickWord();
+				counter = 0;
+				continue;
+			}
+			else {
+				displayAccuracy(gl.getAccuracy(rounds, wins));
+				break;
+			}
 		}
 
 		//keep track of how many turns have passed
 		counter++;
 
 		//if there have been 6 turns, automatically fail and print the correct answer
-		if (counter == 6) {
+		if (counter == 6 ) {
 
-			for (char c : correctWord) {
-				c = std::toupper(c);
-			}
+			rounds++;
 
 			std::cout << "The correct word is: " << correctWord << std::endl;
 			std::cout << "Play again? " << std::endl;
@@ -136,11 +177,12 @@ int main() {
 				continue;
 			}
 			else {
+				displayAccuracy(gl.getAccuracy(rounds, wins));
 				break;
 			}
-			
 		}
 	}
-
 	return 0;
 }
+
+

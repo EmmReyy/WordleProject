@@ -75,3 +75,8 @@ int* GameLogic::checkGuess(std::string guess, std::string chosenWord) {
 
 	return guessNotation;
 }
+
+
+float GameLogic::getAccuracy(int rounds, int wins) {
+	return std::round((static_cast<float>(wins) / rounds) * 1000.0f) / 10.0f;
+}
