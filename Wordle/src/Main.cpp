@@ -5,39 +5,66 @@
 #include <conio.h>
 #include <windows.h>
 #include <filesystem>
-#include "WordsParser.h"	//header for my WordsParse class, which read the text file
+#include "WordsParser.h"	
 #include <vector>
-#include "GameLogic.h"		//header for my GameLogic class, which handles the rules of the game
+#include "GameLogic.h"
 
 
-void notationPrinter(int* notation, std::string guess);	//prints out each character of the guess, depending on the notation
-bool guessed(int* notation);	//for checking if the notation indicates a correct answer
-void clearInputLine();	//helper function that clears inputs from terminal
-void clearScreen();		//helper function to clear the terminal
-void capsLock(std::string& str);		//converts string to capital
-const int limit = 5;	//hard limit set to 5 letters, can be changed in future updates
-void displayAccuracy(float accuracy);		//for dsiplaying the players succes rate after the game
+void notationPrinter(int* notation, std::string guess);			//prints out each character of the guess, depending on the notation
+bool guessed(int* notation);									//for checking if the notation indicates a correct answer
+void clearPrevLines(int lines);									//helper function that clears previous lines from terminal
+void clearScreen();												//helper function to clear the terminal
+void capsLock(std::string& str);								//converts string to capital
+const int limit = 5;											//hard limit set to 5 letters, can be changed in future updates
+void displayAccuracy(float accuracy);							//for dsiplaying the players succes rate after the game
 void tempPrinter(const std::string& msg, int milliseconds);		//for printin output that disappears after a set time
-bool enableANSI();		//enabe ANSI escape codes, allows for colored fonts, handled in separate fucntion
+bool enableANSI();												//enabe ANSI escape codes, allows for colored fonts, handled in separate fucntion
+bool startNewLoop();											//decides if new round will be started and updates neede variables if so; also handles win or loss conditions; hanled in separate function for convenience and readability
+
+bool startNewLoop() {
+	std::cout << std::endl;
+	std::cout << "Play again? \n" << std::endl;
+
+	std::string resp;
+	std::getline(std::cin, resp);
+	capsLock(resp);
+
+	//checks input if user wants to play again, yes starts a new loop and any other intpu exits; also prints out the top bar
+	if (resp == "YES") {
+		clearScreen();
+		std::cout << "===========================COMMAND LINE WORDLE===========================" << std::endl;
+		return true;
+
+	}
+	else {
+		//remove the prompt asking users for response and retunrs true
+		clearPrevLines(3);
+		return false;
+	}
+}
+
 void capsLock(std::string& str) {
 
+	//iterate through the chars in a string, converts char to uppercase
 	for (char &c : str) {
 		c = std::toupper(c);
 	}
 }
 
-void clearInputLine() {
-	// move the cursor up one line, clear the entire line, and return the cursor to the start
-	std::cout << "\x1b[1A" << "\x1b[2K" << "\r";
-	// clears the out stream so next input is sent to terminal
-	std::cout.flush(); 
+void clearPrevLines(int lines) {
+	//repeats clearing of line until reaches desired amount of lines to clear
+	for (int i = 0; i < lines; ++i) {
+		std::cout << "\x1b[1A"		//ANSI escape code that moves the cursor up
+			<< "\x1b[2K";			//escape code that clears the line
+	}
+	std::cout << "\r";				//resets cursor position
+	std::cout.flush();				//reset the out stream
 }
 
 void clearScreen() {
-	// ANSI escape codes to clear screen and move cursor to home position
-	std::cout << "\033[2J\033[H";
-	// clears the out stream so next input is sent to terminal
-	std::cout.flush();
+	
+	std::cout << "\033[2J\033[H";		//ANSI escape codes to clear screen and move cursor to starting pos
+	std::cout.flush();					//clears the out stream so next input is sent to terminal
 }
 
 void notationPrinter(int* notation, std::string guess) {
@@ -59,13 +86,14 @@ void notationPrinter(int* notation, std::string guess) {
 			std::cout << "|\033[32m" << guess[i] << "\033[0m";
 		}
 	}
-
+	//prints the final | that separates chars
 	std::cout << "|" << std::endl;
 }
 
 void displayAccuracy(float accuracy) {
 	std::cout << "You acuracy is " << accuracy << "%, ";
 	
+	//prints out a remark that depends on the users score
 	if (accuracy == 100) std::cout << "Flawless!" << std::endl;
 	else if (accuracy >= 95.0 && accuracy < 100) std::cout << "Impeccable!" << std::endl;
 	else if (accuracy >= 90.0 && accuracy < 95.0) std::cout << "Impressive!" << std::endl;
@@ -76,6 +104,7 @@ void displayAccuracy(float accuracy) {
 }
 
 bool guessed(int* notation) {
+	//iterates through the guess' notation; will return true unless there is an incorrect char, which will cuase it to retrun false
 	for (int i = 0; i < limit; i++) {
 		if (notation[i] != 2) {
 			return false;
@@ -86,26 +115,25 @@ bool guessed(int* notation) {
 }
 
 void tempPrinter(const std::string& msg, int milliseconds) {
-	std::cout << msg << std::endl;
-	std::cout.flush();
+	std::cout << msg << std::endl;		//prints the message
+	std::cout.flush();					//precaution; clears cout
 
 	int elapsed = 0;
-	const int interval = 50; // check every 50ms
+	const int interval = 50;			//check every 50ms
 
 	while (elapsed < milliseconds) {
-		if (_kbhit()) { // user pressed a key
-			int ch = _getch(); // consume it
-			if (ch == 13) {    // Enter key
-				break;
+		if (_kbhit()) {					//checks if user enters 
+			int ch = _getch();			//get the kry
+			if (ch == 13) {				//checks if enter key
+				break;					//breaks and immediately clear without waiting for time if user enters
 			}
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(interval));
+		std::this_thread::sleep_for(std::chrono::milliseconds(interval));		//waits for the time to pass
 		elapsed += interval;
 	}
 
 	// Clear the line
-	std::cout << "\x1b[1A" << "\x1b[2K" << "\r";
-	std::cout.flush();
+	clearPrevLines(1);
 }
 
 bool enableANSI() {
@@ -133,49 +161,37 @@ int main(int argc, char* argv[]) {
 	std::filesystem::path exeDir = std::filesystem::path(argv[0]).parent_path();
 	std::filesystem::path wordsPath = exeDir / "WORDS";
 	
-	//creates an object of WordParser class
-	WordsParser wp(wordsPath.string());
+	WordsParser wp(wordsPath.string());					//creates an object of WordParser class
+	std::vector<std::string> words = wp.getWords();		//stores the list of words given by Parser object
+	GameLogic gl = GameLogic(limit, words);				//create an object of GameLogic class
 
-	//stores the list of words given by Parser object
-	std::vector<std::string> words = wp.getWords();
-
-	//create an object of GameLogic class
-	GameLogic gl = GameLogic(limit, words);
-
-	//is the counter for how many turns player has taken
-	int counter = 0;
-	//for sotring how many games the player played
-	int rounds = 0;
-	//for storing how many games the player won
-	int wins = 0;
-	//is the word that the player is guessing
-	std::string correctWord = gl.pickWord();
-	//converts the word to all uppercase
-	capsLock(correctWord);
+	int counter = 0;									//is the counter for how many turns player has taken	
+	int rounds = 0;										//for sotring how many games the player played	
+	int wins = 0;										//for storing how many games the player won	
+	std::string correctWord = gl.pickWord();			//is the word that the player is guessing
+	capsLock(correctWord);								//converts the word to all uppercase
 	
+	//initial printout of the instructions for new players
 	std::cout << "===========================COMMAND LINE WORDLE===========================" << std::endl;
 	tempPrinter("[1] Guess the word in 6 turns or less!", 2000);
-	tempPrinter("[2] Clues will come in the form of font color of your guess' letters!", 2000);
+	tempPrinter("[2] Clues will come in the form of font colors of your guess' letters!", 2000);
 	tempPrinter("[3] Grey means the correct word does not have this letter.", 2000);
 	tempPrinter("[4] Yellow means the correct word does have this letter, but it's in the wrong position!", 2000);
-	tempPrinter("[5] Green means the correct word has this letter and its in the right position!", 2000);
+	tempPrinter("[5] Green means the correct word has this letter and it's in the right position!", 2000);
 	tempPrinter("[6] Enter your guess to begin the game!", 2000);
 
 	//the game loop
 	while (true) {
-		//the guess input by the user
-		std::string guess;
-		//is the array notation for the guess (pointer)
-		int* notation;
-		//reads user input
-		std::getline(std::cin, guess);
-		//capitalizes input, to match the correct word
-		capsLock(guess);
-		//removes the echo of user input, so that input guesses wont stick around
-		clearInputLine();
+		
+		std::string guess;					//the guess input by the user		
+		int* notation;						//is the array notation for the guess (pointer)		
+		std::getline(std::cin, guess);		//reads user input		
+		capsLock(guess);					//capitalizes input, to match the correct word
+		clearPrevLines(1);					//removes the echo of user input, so that input guesses wont stick around
 
 		std::cout << std::endl;
 
+		//WAS USED FOR TESTING, NOW FEATURE; displays the answer briefly
 		if (guess == "HINT PLS") {
 			tempPrinter(correctWord + " is the answer!", 750);
 			continue;
@@ -188,60 +204,45 @@ int main(int argc, char* argv[]) {
 			continue;
 		}
 
-		//saves the notation based on the guess
-		notation = gl.checkGuess(guess, correctWord);
-		
-		//prints the gues with the proper font colors based on notation
-		notationPrinter(notation, guess);
+		notation = gl.checkGuess(guess, correctWord);		//saves the notation based on the guess
+
+		notationPrinter(notation, guess);					//prints the gues with the proper font colors based on notation
 
 		//if the guess matches correct word, exit out of loop
 		if (guessed(notation)) {
 			std::cout << "You got it! The word is: " << correctWord << std::endl;
 
-			rounds++;
-			wins++;
+			rounds++;		//since the game is over, add to the number of rounds played
+			wins++;			//since game ended by winning, add to the number of wins
 
-			std::cout << "Play again? " << std::endl;
-
-			std::string resp;
-			std::getline(std::cin, resp);
-			capsLock(resp);
-
-			if (resp == "YES") {
-				clearScreen();
+			//asks the user for a response, then starts a new round or displays the results and ends the loop
+			if (startNewLoop()) {
 				correctWord = gl.pickWord();
 				counter = 0;
 				continue;
 			}
 			else {
 				displayAccuracy(gl.getAccuracy(rounds, wins));
+				tempPrinter("\n=========================================================================", 5000);
 				break;
 			}
 		}
 
-		//keep track of how many turns have passed
-		counter++;
+		counter++;		//keep track of how many turns have passed
 
 		//if there have been 6 turns, automatically fail and print the correct answer
 		if (counter == 6 ) {
+			rounds++;		//add to the number of rounds played
 
-			rounds++;
-
-			std::cout << "The correct word is: " << correctWord << std::endl;
-			std::cout << "Play again? " << std::endl;
-
-			std::string resp;
-			std::getline(std::cin, resp);
-			capsLock(resp);
-
-			if (resp == "YES") {
-				clearScreen();
+			//asks the user for a response, then starts a new round or displays the results and ends the loop
+			if (startNewLoop()) {
 				correctWord = gl.pickWord();
 				counter = 0;
 				continue;
 			}
 			else {
 				displayAccuracy(gl.getAccuracy(rounds, wins));
+				tempPrinter("\n=========================================================================", 5000);
 				break;
 			}
 		}

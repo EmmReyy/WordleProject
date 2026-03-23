@@ -10,20 +10,23 @@ WordsParser::WordsParser(std::string dir) {
 //reads out the file, line by line, and stores each word in a list (a type of array)
 void WordsParser::parseFile(std::string dir) {
 	
-	std::ifstream wordsFile(dir);
+	std::ifstream wordsFile(dir);		//opens the file; input file stream of the WORDS file; para lang to na cin except yung input galing sa file
 
+	//checks if a file is successfully opened, prints error and exits if failed
 	if (!wordsFile.is_open()) {
 		std::cerr << "No words file was opened" << std::endl;
 		return;
 	}
 
-	std::string word;
+	std::string word;	//placeholder variable for parsed word
 
+	//iterates through the file, line by line, and saves each line as string and adds to the word list
 	while (std::getline(wordsFile, word)) {
 		capsLock(word);
 		WordsParser::words.push_back(word);
 	}
 
+	//close the file
 	wordsFile.close();
 }
 
@@ -32,6 +35,7 @@ std::vector<std::string>& WordsParser::getWords(){
 	return WordsParser::words;
 }
 
+//helper function to capitalise the words
 void WordsParser::capsLock(std::string& str) {
 	for (char& c : str) {
 		c = std::toupper(c);

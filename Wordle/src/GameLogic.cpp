@@ -13,12 +13,9 @@ GameLogic::GameLogic(int letterLimit, std::vector<std::string>& words) {
 
 //pick a random word to make players guess
 std::string GameLogic::pickWord() {
-
-	//seeding
-	std::srand(static_cast<unsigned int>(std::time(nullptr)));
-	//generate the last a number between zero and the last index of the list of words
-	int chosenWordNdx = (std::rand() % GameLogic::words.size()-1);
-	return GameLogic::words[chosenWordNdx];
+	std::srand(static_cast<unsigned int>(std::time(nullptr)));		//seeding
+	int chosenWordNdx = (std::rand() % GameLogic::words.size()-1);	//generate the last a number between zero and the last index of the list of words
+	return GameLogic::words[chosenWordNdx];							//returns the chosen word
 }
 
 //checks the guess for correct letters and position
@@ -45,14 +42,15 @@ the notation for that is
 */
 int* GameLogic::checkGuess(std::string guess, std::string chosenWord) {
 
+	//extra precaution, checks if the guess meets required length
 	if (guess.size() != letterLimit) {
 		std::cerr << "Guesses can only be "<< letterLimit <<" letter!" << std::endl;
 		return 0;
 	}
 
-	//int guessNotation[5] = {0,0,0,0,0};
-	int* guessNotation = new int[5] {0, 0, 0, 0, 0};
+	int* guessNotation = new int[5] {0, 0, 0, 0, 0}; //the initial array that represent notation (which is to say, the correctness of the guess)
 
+	//if the guess matches the chosenWord, immediately returns a notation of {2,2,2,2,2}
 	if (guess == chosenWord){
 		for (int i = 0; i < 5; i++) {
 			guessNotation[i] = 2;
@@ -69,6 +67,7 @@ int* GameLogic::checkGuess(std::string guess, std::string chosenWord) {
 		else if (chosenWord.find(guess[i]) != std::string::npos && guess[i] != chosenWord[i])  {
 			guessNotation[i] = 1;
 		}
+		//if the leter is not present in the correct word, save it to grey letters list
 		else if (chosenWord.find(guess[i]) != std::string::npos) {
 			greyed.push_back(guess[i]);
 		}
@@ -77,7 +76,7 @@ int* GameLogic::checkGuess(std::string guess, std::string chosenWord) {
 	return guessNotation;
 }
 
-
+//return the score of the player
 float GameLogic::getAccuracy(int rounds, int wins) {
-	return std::round((static_cast<float>(wins) / rounds) * 1000.0f) / 10.0f;
+	return std::round((static_cast<float>(wins) / rounds) * 1000.0f) / 10.0f;	//returns accuracy in percent; multiplied by 1000.0 and divided by 10.0 to set decimal point to one place only
 }

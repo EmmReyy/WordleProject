@@ -8,18 +8,16 @@ checking if the guessed word is correct, and generating notation for guesses*/
 class GameLogic {
 
 private:
-	std::vector<std::string> words;
-	std::vector<char> greyed;
-	int letterLimit;
-
-	bool guessed = false;
+	std::vector<std::string> words;									//list of words
+	std::vector<char> greyed;										//list of letters not included in the word
+	int letterLimit;												//hard limit to the number of letters				
 
 public:
-	GameLogic(int letterLimit, std::vector<std::string>& words);
+	GameLogic(int letterLimit, std::vector<std::string>& words);	//constuctor, sets the letter limit and the word list
 	
-	std::string pickWord();
+	std::string pickWord();											//randomly chooses the worrd to guess
 
-	int* checkGuess(std::string guess, std::string chosenWord);
+	int* checkGuess(std::string guess, std::string chosenWord);		//checks the user guess and returns the notation for the guess
 
-	float getAccuracy(int rounds, int wins);
+	float getAccuracy(int rounds, int wins);						//gets the accuracy (score) 
 };

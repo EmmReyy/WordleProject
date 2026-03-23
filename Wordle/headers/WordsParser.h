@@ -9,16 +9,17 @@ list
 class WordsParser
 {
 private:
-	std::vector<std::string> words;
+	std::vector<std::string> words;			//list of parsed words
 
 public:
 
-	WordsParser(std::string dir);
 
-	void parseFile(std::string dir);
+	WordsParser(std::string dir);			//constructor for class, sets the directory of the file
 
-	std::vector<std::string>& getWords();
+	void parseFile(std::string dir);		//parses the text line by line and savess to words list
 
-	void capsLock(std::string& str);
+	std::vector<std::string>& getWords();	//returns the word list
+
+	void capsLock(std::string& str);		//capitalises words
 };
 
