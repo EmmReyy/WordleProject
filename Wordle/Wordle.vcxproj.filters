@@ -36,4 +36,8 @@
   <ItemGroup>
     <CopyFileToFolders Include="WORDS" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\..\IdeaProjects\WordleHelp\fiveLetterWords.txt" />
+    <Text Include="fiveLetterWords.txt" />
+  </ItemGroup>
 </Project>

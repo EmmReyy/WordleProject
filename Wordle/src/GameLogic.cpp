@@ -2,12 +2,14 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
 #include <iostream>
 #include "GameLogic.h"
 
 //constructor for the class, sets the variables for the list of words, and the letter limits
-GameLogic::GameLogic(int letterLimit, std::vector<std::string>& words) {
+GameLogic::GameLogic(int letterLimit, std::vector<std::string>& words, std::vector<std::string>& completeWords ) {
 	GameLogic::words = words;
+	GameLogic::completeWords = completeWords;
 	GameLogic::letterLimit = letterLimit;
 }
 
@@ -62,21 +64,44 @@ int* GameLogic::checkGuess(std::string guess, std::string chosenWord) {
 		//if the character of the guess matches the position of the same character of the correct word, mark it green
 		if (guess[i] == chosenWord[i]) {
 			guessNotation[i] = 2;
+			GameLogic::green.push_back(guess[i]);
 		}
 		//if the letter of the guess is present in the correct word but the position is wrong, mark it yellow
 		else if (chosenWord.find(guess[i]) != std::string::npos && guess[i] != chosenWord[i])  {
 			guessNotation[i] = 1;
+			GameLogic::yellow.push_back(guess[i]);
 		}
 		//if the leter is not present in the correct word, save it to grey letters list
-		else if (chosenWord.find(guess[i]) != std::string::npos) {
-			greyed.push_back(guess[i]);
+		else if (chosenWord.find(guess[i]) == std::string::npos) {
+			GameLogic::greyed.push_back(guess[i]);
 		}
 	}
 
 	return guessNotation;
 }
 
+//checks if the guess is a valid word
+bool GameLogic::isGuessValid(std::string guess) {
+	return (std::binary_search(completeWords.begin(), completeWords.end(), guess));
+
+}
+
 //return the score of the player
 float GameLogic::getAccuracy(int rounds, int wins) {
 	return std::round((static_cast<float>(wins) / rounds) * 1000.0f) / 10.0f;	//returns accuracy in percent; multiplied by 1000.0 and divided by 10.0 to set decimal point to one place only
+}
+
+//returns guessed grey letters
+std::vector<char> GameLogic::getGreys() {
+	return GameLogic::greyed;
+}
+
+//returns guessed green letters
+std::vector<char> GameLogic::getGreens() {
+	return GameLogic::green;
+}
+
+//returns guessed yellow letters
+std::vector<char> GameLogic::getYellows() {
+	return GameLogic::yellow;
 }
