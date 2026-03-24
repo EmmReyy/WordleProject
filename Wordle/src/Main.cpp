@@ -27,7 +27,23 @@ void printValidLetters(GameLogic gl);										//prints out all the letters, if 
 void charNotationPrinter(char msg, int color);								//function that prints characcters (temporarily) with font color
 void printRules();															//prints the intructions of how to play the game
 void bufferredPrint(std::string str, int time, int notationColor);			//buffered printing effect where statements are printed char by char
+void delay(int ms);															//delay actions for given amount of time; skips delay when enter is pressed
 
+void delay(int ms) {
+	int elapsed = 0;
+	const int interval = 50;			//check every 50ms
+
+	while (elapsed < ms) {
+		if (_kbhit()) {					//checks if user enters 
+			int ch = _getch();			//get the kry
+			if (ch == 13) {				//checks if enter key
+				break;					//breaks and immediately clear without waiting for time if user enters
+			}
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(interval));		//waits for the time to pass
+		elapsed += interval;
+	}
+}
 
 void bufferredPrint(std::string str, int time, int notationColor) {
 	for (char c : str) {
@@ -38,28 +54,22 @@ void bufferredPrint(std::string str, int time, int notationColor) {
 }
 
 void printRules() {
-	bufferredPrint("[1] Guess the word in 6 turns or less!", 10, -1);
-	bufferredPrint("[2] Clues will come in the form of font colors of your guess' letters!", 10, -1);
-	bufferredPrint("[3] Grey means the correct word does not have this letter.", 10,-1);
-	bufferredPrint("[4] Yellow means the correct word does have this letter, but it's in the wrong position!", 10, -1);
-	bufferredPrint("[5] Green means the correct word has this letter and it's in the right position!", 10, -1);
-	bufferredPrint("[6] Enter your guess to begin the game!", 20, -1);
+	bufferredPrint("[1] Guess the word in 6 turns or less!", 5, -1);
+	bufferredPrint("[2] Clues will come in the form of font colors of your guess' letters!", 5, -1);
+	bufferredPrint("[3] Grey means the correct word does not have this letter.", 5,-1);
+	bufferredPrint("[4] Yellow means the correct word does have this letter, but it's in the wrong position!", 5, -1);
+	bufferredPrint("[5] Green means the correct word has this letter and it's in the right position!", 5, -1);
+	bufferredPrint("[6] Enter your guess to begin the game!", 5, -1);
 
+	delay(5000);
 
-	int elapsed = 0;
-	const int interval = 50;			//check every 50ms
-
-	while (elapsed < 10000) {
-		if (_kbhit()) {					//checks if user enters 
-			int ch = _getch();			//get the kry
-			if (ch == 13) {				//checks if enter key
-				break;					//breaks and immediately clear without waiting for time if user enters
-			}
-		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(interval));		//waits for the time to pass
-		elapsed += interval;
-	}
 	clearPrevLines(6);
+
+	bufferredPrint("[*]Also, you can type in \"letters please\" to display valid letters or \"rules please\" to display the tutorial again", 10, -1);
+
+	delay(2000);
+
+	clearPrevLines(1);
 }
 
 void charNotationPrinter(char msg, int color) {
@@ -251,23 +261,14 @@ bool guessed(int* notation) {
 	return true;
 }
 
-void tempPrinter(const std::string& msg, int milliseconds) {
+void tempPrinter(const std::string& msg, int ms) {
 	std::cout << msg << std::endl;		//prints the message
 	std::cout.flush();					//precaution; clears cout
 
 	int elapsed = 0;
 	const int interval = 50;			//check every 50ms
 
-	while (elapsed < milliseconds) {
-		if (_kbhit()) {					//checks if user enters 
-			int ch = _getch();			//get the kry
-			if (ch == 13) {				//checks if enter key
-				break;					//breaks and immediately clear without waiting for time if user enters
-			}
-		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(interval));		//waits for the time to pass
-		elapsed += interval;
-	}
+	delay(ms);
 
 	// Clear the line
 	clearPrevLines(1);
@@ -326,19 +327,20 @@ int main(int argc, char* argv[]) {
 		std::cout << std::endl;
 
 		//WAS USED FOR TESTING, NOW FEATURE; displays the answer briefly
-		if (guess == "HINT PLS") {
+		//PURPOSEFULLY KEPT SECRET FROM USERS TO KEEP IT FAIR
+		if (guess == "HELP PLS") {
 			tempPrinter(correctWord + " is the answer!", 750);
 			continue;
 		}
 
 		//prints out a keyboard with the greyed letters
-		if (guess == "LETTERS PLS") {
+		if (guess == "LETTERS PLEASE") {
 			printValidLetters(gl);
 			continue;
 		}
 
 		//prints out the rules of wordle
-		if (guess == "RULES PLS") {
+		if (guess == "RULES PLEASE") {
 			printRules();
 			continue;
 		}
@@ -352,7 +354,7 @@ int main(int argc, char* argv[]) {
 
 		//check if word is valid
 		if (!gl.isGuessValid(guess)) {
-			tempPrinter("Your guesd isn't a valid word! Try a different word.", 1000);
+			tempPrinter("Your guessed isn't a valid word! Try a different word.", 1500);
 			continue;
 		}
 
