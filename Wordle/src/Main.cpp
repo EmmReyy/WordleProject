@@ -125,9 +125,9 @@ void printValidLetters(GameLogic gl) {
 				//check if the char being iterated thorough is a greyed out letter, if yes prints it freyed
 				int color = -1;
 
-				if (std::find(greyed.begin(), greyed.end(), ch) != greyed.end()) color = 0;
+				if (std::find(greens.begin(), greens.end(), ch) != greens.end()) color = 2;
 				else if (std::find(yellows.begin(), yellows.end(), ch) != yellows.end()) color = 1;
-				else if (std::find(greens.begin(), greens.end(), ch) != greens.end()) color = 2;
+				else if (std::find(greyed.begin(), greyed.end(), ch) != greyed.end()) color = 0;
 
 				//letterboxing and printing of chars
 				std::cout << "|";

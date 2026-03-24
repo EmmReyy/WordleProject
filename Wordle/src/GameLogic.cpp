@@ -60,20 +60,50 @@ int* GameLogic::checkGuess(std::string guess, std::string chosenWord) {
 		return guessNotation;
 	}
 
+	//TODO: Figure out what cause bug where some grey letters are printed green in keyboard
+	//for now, redundant checks are in place to prevent the bug
 	for (int i = 0; i < letterLimit; i++) {
 		//if the character of the guess matches the position of the same character of the correct word, mark it green
 		if (guess[i] == chosenWord[i]) {
 			guessNotation[i] = 2;
-			GameLogic::green.push_back(guess[i]);
+
+			//remove from yellow
+			yellow.erase(std::remove(yellow.begin(), yellow.end(), guess[i]), yellow.end());
+
+			//remove from grey
+			greyed.erase(std::remove(greyed.begin(), greyed.end(), guess[i]), greyed.end());
+
+			//add to green if not already there
+			if (std::find(green.begin(), green.end(), guess[i]) == green.end()) {
+				green.push_back(guess[i]);
+			}
 		}
 		//if the letter of the guess is present in the correct word but the position is wrong, mark it yellow
 		else if (chosenWord.find(guess[i]) != std::string::npos && guess[i] != chosenWord[i])  {
 			guessNotation[i] = 1;
-			GameLogic::yellow.push_back(guess[i]);
+
+			//only if not already green
+			if (std::find(green.begin(), green.end(), guess[i]) == green.end()) {
+
+				//remove from grey
+				greyed.erase(std::remove(greyed.begin(), greyed.end(), guess[i]), greyed.end());
+
+				//add if not already yellow
+				if (std::find(yellow.begin(), yellow.end(), guess[i]) == yellow.end()) {
+					yellow.push_back(guess[i]);
+				}
+			}
 		}
 		//if the leter is not present in the correct word, save it to grey letters list
 		else if (chosenWord.find(guess[i]) == std::string::npos) {
-			GameLogic::greyed.push_back(guess[i]);
+			//only add to grey vector if not present in yellow or greens
+			if (std::find(green.begin(), green.end(), guess[i]) == green.end() &&
+				std::find(yellow.begin(), yellow.end(), guess[i]) == yellow.end()) {
+
+				if (std::find(greyed.begin(), greyed.end(), guess[i]) == greyed.end()) {
+					greyed.push_back(guess[i]);
+				}
+			}
 		}
 	}
 
