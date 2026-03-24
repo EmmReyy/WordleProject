@@ -31,4 +31,6 @@ public:
 	std::vector<char> getYellows();									//returns the letters present in the correct word
 
 	std::vector<char> getGreens();									//returns the letters present in the correct word at the correc pos
+
+	void clear();													//empties list of colored letters
 };

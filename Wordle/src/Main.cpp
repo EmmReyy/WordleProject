@@ -371,6 +371,7 @@ int main(int argc, char* argv[]) {
 
 			//asks the user for a response, then starts a new round or displays the results and ends the loop
 			if (startNewLoop()) {
+				gl.clear();
 				correctWord = gl.pickWord();
 				counter = 0;
 				continue;
@@ -391,6 +392,7 @@ int main(int argc, char* argv[]) {
 			//asks the user for a response, then starts a new round or displays the results and ends the loop
 			std::cout << "\nTurns up! that's too bad! " << "The correct word is: " << correctWord << "!" << std::endl;
 			if (startNewLoop()) {
+				gl.clear();
 				correctWord = gl.pickWord();
 				counter = 0;
 				continue;

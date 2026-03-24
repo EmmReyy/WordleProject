@@ -135,3 +135,9 @@ std::vector<char> GameLogic::getGreens() {
 std::vector<char> GameLogic::getYellows() {
 	return GameLogic::yellow;
 }
+
+void GameLogic::clear() {
+	green.clear();
+	greyed.clear();
+	yellow.clear();
+}
