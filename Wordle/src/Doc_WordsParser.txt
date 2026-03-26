@@ -1,0 +1,37 @@
+#pragma once
+#include <string>
+#include <vector>
+
+/*The WordsParser class is responsible for reading the text file of words and stroign each word in a
+list
+*/
+
+class WordsParser
+{
+private:
+	std::vector<std::string> words;
+		*dito i store yung words na nasa text file of common words
+										
+	std::vector<std::string> completeWords;
+		*dito i store yung words na nasa text file of words na nasa English dictionary									
+
+public:
+
+
+	WordsParser(std::string dir, std::string completeDir);
+		*constructor
+					
+
+	void parseFile(std::string dir, std::vector<std::string>& listWords);
+		*babasahin yung file line by line, kada line i store sa words vector
+	
+
+	std::vector<std::string>& getWords();
+		*i re-return yung list of common words									
+
+	std::vector<std::string>& getCompleteWords();
+		*i re-return yung list of complete words									
+
+	void capsLock(std::string& str);
+		*i convert yung words in to UPPERCASE lahat										
+

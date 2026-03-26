@@ -1,0 +1,63 @@
+#pragma once
+#include <string>
+#include <vector>
+
+/*The GameLogic class handles the rulse of the game, such as picking a correct word at random, 
+checking if the guessed word is correct, and generating notation for guesses*/
+
+class GameLogic {
+
+private:
+	std::vector<std::string> words;	
+		*list of common words to choose form, uya gakua ng words na ipapa guess
+								
+	std::vector<std::string> completeWords;	
+		*near complete list ng lahat na 5 letter word sa dictionary. Ginagamit pang check nag guesses ko valid word
+						
+	std::vector<char> greyed;	
+		*list of letters guessed by player na wala sa correct word
+									
+	std::vector<char> yellow;
+		*list of letters guessed by player na meron sa correct word, pero malli position
+										
+	std::vector<char> green;	
+		*list of letters guessed by player na meron sa correct word at nasa tamang position
+									
+	int letterLimit;	
+		*size dapat ng words, for now lagi to na naka set to 5															
+
+public:
+	GameLogic(int letterLimit, std::vector<std::string>& words, std::vector<std::string>& completeWords);
+		*constructor para sa GameLogic, kukuha ng parameter tapos gagamitin yung parameters para is set yung values ng variables
+		*Yung constructor part siya ng Object Oriented Programming (OOP)
+
+
+	std::string pickWord();	
+		*randomly chooses a word from the list of common words					
+
+	int* checkGuess(std::string guess, std::string chosenWord);	
+		*checks correctness ng guess
+		*notation na ginagamit {0,0,0,0,0} where 0 = GREY, 1 = YELLOW, and 2 = GREEN
+		*halimbawa ang correct word is DOUBT tapos ang guess is DONUT ang notation ng guess is {2,2,0,1,2} since ang D,O, at T nasa corret position ng DOUBT. Walang N kaya 0, at 		 may U pero mali position
+
+
+	float getAccuracy(int rounds, int wins);
+		*gets the score of the player.
+		*example, kung ang number of games is 5 at ang number of wins is 3, 3/5	is 0.6 kaya 60.0% ang accuracy	
+
+			
+	bool isGuessValid(std::string guess);	
+		*i check yung gues kung nasa completeWordsm kung hindi ibig sabihin wala yung guess sa dictionary kaya return false
+						
+	std::vector<char> getGreys();	
+		*i re-return yung lahat na nahulaan na grey letters
+								
+	std::vector<char> getYellows();	
+		*i re-return yung lahat na nahulaan na yellow letters
+								
+	std::vector<char> getGreens();	
+		*i re-return yung lahat na nahulaan na green letters
+								
+	void clear();
+		*i empty yung mga list of greys, greens, and yellows													
+};
