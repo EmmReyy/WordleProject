@@ -21,7 +21,7 @@ public:
 
 	std::vector<std::string>& getWords();									//returns the word list
 
-	std::vector<std::string>& getCompleteWords();									//returns the complete word list
+	std::vector<std::string>& getCompleteWords();							//returns the complete word list
 
 	void capsLock(std::string& str);										//capitalises words
 };

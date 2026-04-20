@@ -150,6 +150,8 @@
     <Text Include="fiveLetterWords.txt">
       <DeploymentContent>true</DeploymentContent>
     </Text>
+    <Text Include="src\Doc_GameLogic.txt" />
+    <Text Include="src\Doc_WordsParser.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

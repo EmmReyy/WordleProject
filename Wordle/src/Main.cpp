@@ -29,6 +29,7 @@ void printRules();															//prints the intructions of how to play the gam
 void bufferredPrint(std::string str, int time, int notationColor);			//buffered printing effect where statements are printed char by char
 void delay(int ms);															//delay actions for given amount of time; skips delay when enter is pressed
 
+
 void delay(int ms) {
 	int elapsed = 0;
 	const int interval = 50;			//check every 50ms

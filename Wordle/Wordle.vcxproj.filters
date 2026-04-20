@@ -38,5 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="fiveLetterWords.txt" />
+    <Text Include="src\Doc_GameLogic.txt" />
+    <Text Include="src\Doc_WordsParser.txt" />
   </ItemGroup>
 </Project>
