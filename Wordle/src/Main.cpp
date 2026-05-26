@@ -8,9 +8,12 @@
 #include "WordsParser.h"	
 #include <vector>
 #include "GameLogic.h"
+#include "HallOfFame.h"
 
 
 //TODO: create separate clas that handles printer functions
+//NOTE: if input is hof clear, hall of fame will be reset. this information should not be known to user.
+//NOTE: if input is help pls, answer will be give. this info should not be known by user
 
 
 void notationPrinter(int* notation, std::string guess);						//prints out each character of the guess, depending on the notation
@@ -55,22 +58,22 @@ void bufferredPrint(std::string str, int time, int notationColor) {
 }
 
 void printRules() {
-	bufferredPrint("[1] Guess the word in 6 turns or less!", 5, -1);
-	bufferredPrint("[2] Clues will come in the form of font colors of your guess' letters!", 5, -1);
-	bufferredPrint("[3] Grey means the correct word does not have this letter.", 5,-1);
-	bufferredPrint("[4] Yellow means the correct word does have this letter, but it's in the wrong position!", 5, -1);
-	bufferredPrint("[5] Green means the correct word has this letter and it's in the right position!", 5, -1);
-	bufferredPrint("[6] Enter your guess to begin the game!", 5, -1);
+	bufferredPrint("[1] Guess the word in 6 turns or less!", 2, -1);
+	bufferredPrint("[2] Clues will come in the form of font colors of your guess' letters!", 2, -1);
+	bufferredPrint("[3] Grey means the correct word does not have this letter.", 2,-1);
+	bufferredPrint("[4] Yellow means the correct word does have this letter, but it's in the wrong position!", 2, -1);
+	bufferredPrint("[5] Green means the correct word has this letter and it's in the right position!", 2, -1);
+	bufferredPrint("[6] Enter your guess to begin the game!", 2, -1);
 
 	delay(5000);
 
 	clearPrevLines(6);
 
-	bufferredPrint("[*]Also, you can type in \"letters please\" to display valid letters or \"rules please\" to display the tutorial again", 10, -1);
+	bufferredPrint("[*]Also, you can type in \"letters please\" to display valid letters or \"rules please\" to display the tutorial again, and also \" hof \" to view the hall of fame", 10, -1);
 
-	delay(2000);
+	delay(3000);
 
-	clearPrevLines(1);
+	clearPrevLines(2);
 }
 
 void charNotationPrinter(char msg, int color) {
@@ -300,11 +303,13 @@ int main(int argc, char* argv[]) {
 	std::filesystem::path exeDir = std::filesystem::path(argv[0]).parent_path();
 	std::filesystem::path wordsPath = exeDir / "WORDS";
 	std::filesystem::path completeWordsPath = exeDir / "fiveLetterWords.txt";
+	std::filesystem::path hallOfFamePath = exeDir / "hallOfFame.txt";
 
 	WordsParser wp(wordsPath.string(), completeWordsPath.string());		//creates an object of WordParser class
 	std::vector<std::string> words = wp.getWords();						//stores the list of words given by Parser object
 	std::vector<std::string> completeWords = wp.getCompleteWords();
 	GameLogic gl = GameLogic(limit, words, completeWords);				//create an object of GameLogic class
+	HallOfFame hf = HallOfFame(hallOfFamePath.string());				//create an object of HallOfFame Class
 			
 	int counter = 0;													//is the counter for how many turns player has taken	
 	int rounds = 0;														//for sotring how many games the player played	
@@ -316,6 +321,11 @@ int main(int argc, char* argv[]) {
 	std::cout << "===========================COMMAND LINE WORDLE===========================" << std::endl;
 	printRules();
 
+	//ask user for the name to be recorded. asked before game to keep fair
+	std::cout << "Enter your name for Hall of Fame: ";
+	std::string playerName;
+	std::getline(std::cin, playerName);
+	clearPrevLines(1);
 	//the game loop
 	while (true) {
 		
@@ -331,6 +341,20 @@ int main(int argc, char* argv[]) {
 		//PURPOSEFULLY KEPT SECRET FROM USERS TO KEEP IT FAIR
 		if (guess == "HELP PLS") {
 			tempPrinter(correctWord + " is the answer!", 750);
+			continue;
+		}
+		
+		//display hall of fame
+		if (guess == "HOF") {
+			hf.displayHallOfFame();
+			delay(7000);
+			clearPrevLines(hf.numOfLines() + 4);
+			continue;
+		}
+
+		//if input is hof clear, reset hall of fame. only for debuggin
+		if (guess == "HOF CLEAR") {
+			hf.resetHallOfFame();
 			continue;
 		}
 
@@ -355,7 +379,7 @@ int main(int argc, char* argv[]) {
 
 		//check if word is valid
 		if (!gl.isGuessValid(guess)) {
-			tempPrinter("Your guessed isn't a valid word! Try a different word.", 1500);
+			tempPrinter("Your guessed word isn't a valid word! Try a different word.", 1500);
 			continue;
 		}
 
@@ -370,6 +394,9 @@ int main(int argc, char* argv[]) {
 			rounds++;		//since the game is over, add to the number of rounds played
 			wins++;			//since game ended by winning, add to the number of wins
 
+			// guesses used = counter + 1 (since counter starts at 0)
+			hf.updatePlayer(playerName, counter + 1, true, gl.getAccuracy(rounds, wins));
+
 			//asks the user for a response, then starts a new round or displays the results and ends the loop
 			if (startNewLoop()) {
 				gl.clear();
@@ -379,7 +406,8 @@ int main(int argc, char* argv[]) {
 			}
 			else {
 				displayAccuracy(gl.getAccuracy(rounds, wins));
-				tempPrinter("\n=========================================================================", 5000);
+				tempPrinter("\n=========================================================================", 2000);
+				hf.displayHallOfFame();
 				break;
 			}
 		}
@@ -391,7 +419,11 @@ int main(int argc, char* argv[]) {
 			rounds++;		//add to the number of rounds played
 
 			//asks the user for a response, then starts a new round or displays the results and ends the loop
-			std::cout << "\nTurns up! that's too bad! " << "The correct word is: " << correctWord << "!" << std::endl;
+			std::cout << "\nTurns up! that's too bad! " << "The correct word is: " << correctWord << "!" << std::endl;;
+
+			// use max guesses since they failed
+			hf.updatePlayer(playerName, 7, false, gl.getAccuracy(rounds, wins));
+
 			if (startNewLoop()) {
 				gl.clear();
 				correctWord = gl.pickWord();
@@ -400,7 +432,8 @@ int main(int argc, char* argv[]) {
 			}
 			else {
 				displayAccuracy(gl.getAccuracy(rounds, wins));
-				tempPrinter("\n=========================================================================", 5000);
+				tempPrinter("\n=========================================================================", 2000);
+				hf.displayHallOfFame();
 				break;
 			}
 		}

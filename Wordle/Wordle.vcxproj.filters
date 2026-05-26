@@ -24,6 +24,9 @@
     <ClCompile Include="src\GameLogic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\HallOfFame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\WordsParser.h">
@@ -32,13 +35,15 @@
     <ClInclude Include="headers\GameLogic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="headers\HallOfFame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="WORDS" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="fiveLetterWords.txt" />
     <Text Include="src\Doc_GameLogic.txt" />
     <Text Include="src\Doc_WordsParser.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="NOTES.md" />
   </ItemGroup>
 </Project>

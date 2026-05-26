@@ -130,28 +130,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\GameLogic.cpp" />
+    <ClCompile Include="src\HallOfFame.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\WordsParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="headers\GameLogic.h" />
+    <ClInclude Include="headers\HallOfFame.h" />
     <ClInclude Include="headers\WordsParser.h" />
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="WORDS">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
-      <FileType>Document</FileType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
-    </CopyFileToFolders>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="fiveLetterWords.txt">
-      <DeploymentContent>true</DeploymentContent>
-    </Text>
     <Text Include="src\Doc_GameLogic.txt" />
     <Text Include="src\Doc_WordsParser.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="NOTES.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
