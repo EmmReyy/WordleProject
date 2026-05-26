@@ -300,10 +300,11 @@ int main(int argc, char* argv[]) {
 	}
 
 	//gets the directory of the words file, relative to the output directory
-	std::filesystem::path exeDir = std::filesystem::path(argv[0]).parent_path();
-	std::filesystem::path wordsPath = exeDir / "WORDS";
-	std::filesystem::path completeWordsPath = exeDir / "fiveLetterWords.txt";
-	std::filesystem::path hallOfFamePath = exeDir / "hallOfFame.txt";
+	std::filesystem::path dataDir = std::filesystem::path("Assets");
+
+	std::filesystem::path wordsPath = dataDir / "WORDS";
+	std::filesystem::path completeWordsPath = dataDir / "fiveLetterWords.txt";
+	std::filesystem::path hallOfFamePath = dataDir / "hallOfFame.txt";
 
 	WordsParser wp(wordsPath.string(), completeWordsPath.string());		//creates an object of WordParser class
 	std::vector<std::string> words = wp.getWords();						//stores the list of words given by Parser object

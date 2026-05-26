@@ -140,10 +140,19 @@
     <ClInclude Include="headers\WordsParser.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Assets\fiveLetterWords.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
+    <Text Include="Assets\hallOfFame.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </Text>
     <Text Include="src\Doc_GameLogic.txt" />
     <Text Include="src\Doc_WordsParser.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\WORDS">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="NOTES.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

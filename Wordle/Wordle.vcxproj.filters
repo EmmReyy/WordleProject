@@ -42,8 +42,11 @@
   <ItemGroup>
     <Text Include="src\Doc_GameLogic.txt" />
     <Text Include="src\Doc_WordsParser.txt" />
+    <Text Include="Assets\fiveLetterWords.txt" />
+    <Text Include="Assets\hallOfFame.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="NOTES.md" />
+    <None Include="Assets\WORDS" />
   </ItemGroup>
 </Project>
